@@ -1,9 +1,7 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Globe, Twitter, MessageCircle, Github, Wallet, ExternalLink, Heart, LinkIcon } from "lucide-react"
-import dynamic from "next/dynamic"
+import { Globe, Twitter, MessageCircle, Github, ExternalLink, Heart, LinkIcon } from "lucide-react"
 
 interface Link {
   title: string
@@ -13,11 +11,6 @@ interface Link {
 interface LinksSectionProps {
   links: Link[]
 }
-
-const WalletMultiButton = dynamic(
-  async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-  { ssr: false }
-)
 
 const getIconForLink = (title: string) => {
   const lowerTitle = title.toLowerCase()
@@ -31,11 +24,7 @@ const getIconForLink = (title: string) => {
 
 export function LinksSection({ links }: LinksSectionProps) {
   return (
-    <div className="w-full max-w-md mx-auto space-y-3">
-      <div className="w-full">
-        <WalletMultiButton className="w-full justify-center h-12 text-sm" />
-      </div>
-
+    <div className="w-full max-w-md mx-auto space-y-2">
       <div className="space-y-2">
         {links.map((link, index) => {
           const IconComponent = getIconForLink(link.title)

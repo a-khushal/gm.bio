@@ -31,7 +31,7 @@ pub mod profile_program {
             ProfileError::UsernameTooLong
         );
         require!(bio.len() <= MAX_BIO_LEN, ProfileError::BioTooLong);
-        require!(bio.len() <= MAX_LINKS, ProfileError::TooManyLinks);
+        require!(links.len() <= MAX_LINKS, ProfileError::TooManyLinks);
         for l in &links {
             require!(l.len() <= MAX_LINK_LEN, ProfileError::LinkTooLong);
         }

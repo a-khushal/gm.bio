@@ -8,6 +8,13 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, X, Upload } from "lucide-react"
+import dynamic from "next/dynamic"
+import { useCreateProfile } from "@/hooks/useCreateProfile"
+
+const WalletMultiButton = dynamic(
+  async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+)
 
 const MAX_USERNAME_LEN = 32
 const MAX_BIO_LEN = 280
@@ -29,6 +36,7 @@ interface SetupFormProps {
 }
 
 export function SetupForm({ onComplete }: SetupFormProps) {
+  const { createProfile, isLoading, error, connected } = useCreateProfile()
   const [username, setUsername] = useState("")
   const [bio, setBio] = useState("")
   const [links, setLinks] = useState<Link[]>([{ title: "", url: "" }])
@@ -79,23 +87,33 @@ export function SetupForm({ onComplete }: SetupFormProps) {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const validLinks = links.filter((link) => link.title && link.url)
-    onComplete({
+    
+    const validLinks = links.filter((link) => link.title.trim() && link.url.trim())
+    const profileData = {
       username,
       bio,
       links: validLinks,
       avatar,
-    })
+    }
+    
+    try {
+      await createProfile(profileData)
+      onComplete(profileData)
+      alert('done')
+    } catch (err) {
+      console.error("Failed to create profile:", err)
+    }
   }
 
   const isFormValid =
+    connected &&
     username.trim() &&
     username.length <= MAX_USERNAME_LEN &&
     bio.trim() &&
     bio.length <= MAX_BIO_LEN &&
-    links.some((link) => link.title && link.url) &&
+    links.some((link) => link.title.trim() && link.url.trim()) &&
     !usernameError &&
     Object.keys(linkErrors).length === 0
 
@@ -110,8 +128,23 @@ export function SetupForm({ onComplete }: SetupFormProps) {
         <CardHeader>
           <CardTitle className="text-xl text-center">Setup Your Profile</CardTitle>
         </CardHeader>
+        <div>
+          <div className="w-full flex justify-center">
+            <WalletMultiButton />
+          </div>
+          {!connected && (
+            <p className="text-xs text-destructive mt-2 text-center">
+              Please connect your wallet to create a profile
+            </p>
+          )}
+          {error && (
+            <p className="text-xs text-destructive mt-2 text-center">
+              {error}
+            </p>
+          )}
+        </div>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className={`space-y-6 ${!connected ? 'opacity-50 pointer-events-none' : ''}`}>
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Profile Picture</label>
               <div className="flex items-center gap-4">
@@ -128,7 +161,7 @@ export function SetupForm({ onComplete }: SetupFormProps) {
                 </div>
                 <Input
                   type="url"
-                  placeholder="Enter image URL or upload NFT"
+                  placeholder="Enter image URL"
                   value={avatar}
                   onChange={(e: any) => setAvatar(e.target.value)}
                   className="flex-1"
@@ -231,13 +264,15 @@ export function SetupForm({ onComplete }: SetupFormProps) {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              disabled={!isFormValid}
-              className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium"
-            >
-              Create Profile
-            </Button>
+            <div className="space-y-4">
+              <Button
+                type="submit"
+                disabled={!isFormValid || isLoading}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+              >
+                {isLoading ? "Creating Profile..." : !connected ? "Connect Wallet First" : "Create Profile"}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

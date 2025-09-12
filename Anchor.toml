@@ -12,7 +12,7 @@ program = "7EiXfcfkDh4eQWTWhrUNydZroe6sQiZzxryfbSwS1ddf"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

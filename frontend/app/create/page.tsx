@@ -35,15 +35,15 @@ export default function HomePage() {
     )
   }
 
-  return (
-    <main className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-md">
-        <div className="flex flex-col items-center space-y-8">
-          <ProfileSection profileData={profileData} />
-          <LinksSection links={profileData?.links || []} />
-          <QRSection />
-        </div>
-      </div>
-    </main>
-  )
+  // return (
+  //   <main className="min-h-screen bg-background">
+  //     <div className="container mx-auto px-4 py-8 max-w-md">
+  //       <div className="flex flex-col items-center space-y-8">
+  //         <ProfileSection profileData={profileData} />
+  //         <LinksSection links={profileData?.links || []} />
+  //         <QRSection />
+  //       </div>
+  //     </div>
+  //   </main>
+  // )
 }
