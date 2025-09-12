@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///home/a-khushal/Documents/Projects/gm.bio/frontend/app/page.tsx"],"sourcesContent":["\"use client\"\n\nimport { WalletMultiButton } from '@solana/wallet-adapter-react-ui'\n\nexport default function Home() {\n  return (\n    <main>\n      <WalletMultiButton />\n    </main>\n  )\n}\n"],"names":[],"mappings":";;;;;AAEA;AAFA;;;AAIe,SAAS;IACtB,qBACE,0PAAC;kBACC,cAAA,0PAAC,oNAAiB;;;;;;;;;;AAGxB","debugId":null}}]
+}

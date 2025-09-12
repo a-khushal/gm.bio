@@ -1,6 +1,6 @@
 ## gm.bio
 
-Minimal workspace with a Solana Anchor program and a Next.js frontend.
+gm.bio is an on-chain link-in-bio built on Solana with an Anchor program and a Next.js app. Create and update a public profile and your links directly on-chain, then view them in a simple web UI. Use it as a reference for building profile-driven Solana dApps.
 
 ### Requirements
 - Node.js 18+
