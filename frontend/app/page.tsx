@@ -1,16 +1,5 @@
-"use client"
-
-import dynamic from 'next/dynamic'
-
-const WalletMultiButton = dynamic(
-  async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-  { ssr: false }
-)
+import { redirect } from "next/navigation"
 
 export default function Home() {
-  return (
-    <main>
-      <WalletMultiButton />
-    </main>
-  )
+  redirect("/create")
 }
