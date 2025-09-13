@@ -36,8 +36,6 @@ export const useProfile = () => {
             
             const account = await program.account.userProfile.fetch(profilePDA)
 
-            console.log("val: ", account)
-
             setProfile({
                 owner: account.owner.toString(),
                 username: account.username,
@@ -57,13 +55,13 @@ export const useProfile = () => {
     }
 
     useEffect(() => {
-        if (connected && publicKey) {
+        if (connected && publicKey && program) {
             fetchProfile()
         } else {
             setProfile(null)
             setExists(false)
         }
-    }, [connected, publicKey, program])
+    }, [connected, publicKey])
 
     return {
         profile,

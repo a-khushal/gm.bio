@@ -1,26 +1,20 @@
 import { useWallet } from "@solana/wallet-adapter-react"
+import { Link } from "./create"
 import { useProgram } from "@/lib/program-cllient"
 import { useState } from "react"
 
-interface Link {
-    title: string
-    url: string
+interface UpdateProfileData {
+    bio?: string
+    links?: string[]
 }
 
-interface CreateProfileData {
-    username: string
-    bio: string
-    links: Link[]
-    avatar?: string
-}
-
-export const useCreateProfile = () => {
+export const useUpdateProfile = () => {
     const { connected, publicKey } = useWallet()
     const program = useProgram()
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    const createProfile = async (data: CreateProfileData) => {
+    const updateProfile = async (data: UpdateProfileData) => {
         if (!program || !publicKey) {
             throw new Error("Wallet not connected")
         }
@@ -29,19 +23,16 @@ export const useCreateProfile = () => {
         setError(null)
 
         try {
-            const validLinks = data.links.filter((link) => link.title.trim() && link.url.trim())
-            const urls = validLinks.map((link) => link.url)
-
             await program.methods
-                .createProfile(data.username, data.bio, urls)
+                .updateProfile(data.bio || null, data.links || null)
                 .accounts({
-                    user: publicKey.toBase58()
+                    user: publicKey,
                 })
                 .rpc()
 
             return true
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Failed to create profile"
+            const errorMessage = err instanceof Error ? err.message : "Failed to update profile"
             setError(errorMessage)
             throw err
         } finally {
@@ -50,10 +41,10 @@ export const useCreateProfile = () => {
     }
 
     return {
-        createProfile,
+        updateProfile,
         isLoading,
         error,
         connected,
-        publicKey
+        publicKey,
     }
 }

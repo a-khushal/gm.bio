@@ -2,15 +2,17 @@
 
 import type React from "react"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, X, Upload } from "lucide-react"
 import dynamic from "next/dynamic"
-import { useCreateProfile } from "@/hooks/use-create-profile"
-import { useProfile } from "@/hooks/useProfile"
+import { useCreateProfile } from "@/hooks/create"
+import { useUpdateProfile } from "@/hooks/update"
+import { useProfile } from "@/hooks/use-profile"
+import { getLinkType } from "@/lib/link"
 
 const WalletMultiButton = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -28,8 +30,10 @@ interface Link {
 }
 
 export function SetupForm() {
-  const { createProfile, isLoading, error, connected } = useCreateProfile()
+  const { createProfile, isLoading: createLoading, error: createError, connected } = useCreateProfile()
+  const { updateProfile, isLoading: updateLoading, error: updateError } = useUpdateProfile()
   const { profile, exists, isLoading: profileLoading } = useProfile()
+  const lastProfileOwner = useRef<string | null>(null)
   const [username, setUsername] = useState("")
   const [bio, setBio] = useState("")
   const [links, setLinks] = useState<Link[]>([{ title: "", url: "" }])
@@ -39,7 +43,9 @@ export function SetupForm() {
   const [linkErrors, setLinkErrors] = useState<{ [key: number]: { title?: string; url?: string } }>({})
 
   useEffect(() => {
-    if (exists && profile) {
+    if (exists && profile && profile.owner !== lastProfileOwner.current) {
+      lastProfileOwner.current = profile.owner
+
       setBio(profile.bio)
 
       const normalizedLinks: Link[] = profile.links.map((url) => ({
@@ -47,7 +53,9 @@ export function SetupForm() {
         url,
       }))
 
-      setLinks(normalizedLinks.length ? normalizedLinks : [{ title: "", url: "" }])
+      setLinks(
+        normalizedLinks.length ? normalizedLinks : [{ title: "", url: "" }]
+      )
     }
   }, [exists, profile])
 
@@ -108,7 +116,41 @@ export function SetupForm() {
       await createProfile(profileData)
       alert('done')
     } catch (err) {
-      console.error("Failed to create profile:", err)
+      console.error(err)
+    }
+  }
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    const updateData: { bio?: string; links?: string[] } = {}
+
+    if (bio !== profile?.bio) {
+      updateData.bio = bio
+    }
+
+    const updatedUrls = links
+      .map((l) => l.url.trim())
+      .filter(Boolean)
+
+    if (
+      !profile?.links ||
+      profile.links.length !== updatedUrls.length ||
+      profile.links.some((url, idx) => url !== updatedUrls[idx])
+    ) {
+      updateData.links = updatedUrls
+    }
+
+    if (!updateData.bio && !updateData.links) {
+      alert("Nothing to update")
+      return
+    }
+
+    try {
+      await updateProfile(updateData);
+      alert("profile updated")
+    } catch (err) {
+      console.error(err)
     }
   }
 
@@ -129,19 +171,29 @@ export function SetupForm() {
         <p className="text-muted-foreground">Create your on-chain-bio</p>
       </div>
 
-      {exists.toString()}
-      {JSON.stringify(profile)}
-
       {exists && profile && (
         <Card className="w-full bg-card border-border">
           <CardHeader>
             <CardTitle className="text-xl text-center">Update Your Profile</CardTitle>
           </CardHeader>
+          <div>
+            <div className="w-full flex justify-center">
+              <WalletMultiButton />
+            </div>
+            {!connected && (
+              <p className="text-xs text-destructive mt-2 text-center">
+                Please connect your wallet to create a profile
+              </p>
+            )}
+            {updateError && (
+              <p className="text-xs text-destructive mt-2 text-center">
+                {updateError}
+              </p>
+            )}
+          </div>
           <CardContent>
             <form
-              onSubmit={(e) => {
-                e.preventDefault()
-              }}
+              onSubmit={handleUpdate}
               className="space-y-6"
             >
               <div className="space-y-2">
@@ -191,7 +243,7 @@ export function SetupForm() {
                           <Input
                             type="text"
                             placeholder="Link title (e.g., Website, Twitter)"
-                            value={link.title}
+                            value={link.title || (link.url ? getLinkType(link.url) : "")}
                             onChange={(e) => updateLink(index, "title", e.target.value)}
                             className="w-full"
                           />
@@ -231,9 +283,10 @@ export function SetupForm() {
               <div className="space-y-4">
                 <Button
                   type="submit"
+                  disabled={updateLoading}
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
                 >
-                  Update Profile
+                  {updateLoading ? "Updating Profile..." : "Update Profile"}
                 </Button>
               </div>
             </form>
@@ -256,9 +309,9 @@ export function SetupForm() {
                 Please connect your wallet to create a profile
               </p>
             )}
-            {error && (
+            {createError && (
               <p className="text-xs text-destructive mt-2 text-center">
-                {error}
+                {createError}
               </p>
             )}
           </div>
@@ -386,10 +439,10 @@ export function SetupForm() {
               <div className="space-y-4">
                 <Button
                   type="submit"
-                  disabled={!isFormValid || isLoading}
+                  disabled={!isFormValid || createLoading}
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
                 >
-                  {isLoading ? "Creating Profile..." : !connected ? "Connect Wallet First" : exists ? "Update Profile" : "Create Profile"}
+                  {createLoading ? "Creating Profile..." : !connected ? "Connect Wallet First" : exists ? "Update Profile" : "Create Profile"}
                 </Button>
               </div>
             </form>
