@@ -1,5 +1,4 @@
 import { useWallet } from "@solana/wallet-adapter-react"
-import { Link } from "./create"
 import { useProgram } from "@/lib/program-cllient"
 import { useState } from "react"
 

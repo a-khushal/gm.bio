@@ -9,7 +9,7 @@ export function QRSection() {
   const [showQR, setShowQR] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const profileUrl = "https://gm.bio/gmcrypto.eth"
+  const profileUrl = "https://gm.bio/gmcrypto"
 
   const copyToClipboard = async () => {
     try {

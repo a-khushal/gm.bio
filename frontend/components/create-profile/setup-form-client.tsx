@@ -13,6 +13,9 @@ import { useProfile } from "@/hooks/use-profile"
 import { getLinkType } from "@/lib/link"
 import Link from "next/link"
 import { uploadAvatarToPinata } from "@/lib/upload"
+import { useWallet } from "@solana/wallet-adapter-react"
+import { storeAvatarToPinata } from "@/actions/uploadToDb"
+import { useProgram } from "@/lib/program-cllient"
 
 const WalletMultiButton = dynamic(
     async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -114,6 +117,8 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
     const [links, setLinks] = useState<Link[]>([{ title: "", url: "" }])
     const [avatar, setAvatar] = useState<string>("")
     const [file, setFile] = useState<File | null>(null);
+    const { publicKey } = useWallet()
+    const program = useProgram()
 
     const [usernameError, setUsernameError] = useState("")
     const [linkErrors, setLinkErrors] = useState<{ [key: number]: { title?: string; url?: string } }>({})
@@ -178,34 +183,42 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-    
-        const validLinks = links.filter((link) => link.title.trim() && link.url.trim());
+        e.preventDefault()
+
+        const validLinks = links.filter((link) => link.title.trim() && link.url.trim())
         const profileData = {
             username,
             bio,
             links: validLinks,
             avatar,
-        };
-    
+        }
+
         try {
+            await createProfile(profileData)
+
             if (file) {
-                const { url } = await uploadAvatarToPinata(file);
-                setAvatar(url);
-                profileData.avatar = url;
+                const { url } = await uploadAvatarToPinata(file)
+
+                setAvatar(url)
+                profileData.avatar = url
+
+                await storeAvatarToPinata({
+                    userPublicKey: publicKey?.toBase58()!,
+                    programId: program?.programId.toBase58()!,
+                    pinataUrl: url
+                })
             }
-    
-            await createProfile(profileData);
-    
+
             if (onSetupComplete) {
-                onSetupComplete(profileData);
+                onSetupComplete(profileData)
             } else {
-                alert("Profile created successfully!");
+                alert("Profile created successfully!")
             }
         } catch (err) {
-            console.error(err);
+            console.error(err)
         }
-    };
+    }
+
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault()

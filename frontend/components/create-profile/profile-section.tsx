@@ -40,7 +40,7 @@ export function ProfileSection({ profileData }: ProfileSectionProps) {
 
       <div className="space-y-2">
         <h1 className="text-2xl font-bold text-foreground">{username}</h1>
-        <p className="text-sm text-muted-foreground">@{username.toLowerCase().replace(/\s+/g, "")}.eth</p>
+        <p className="text-sm text-muted-foreground">@{username.toLowerCase().replace(/\s+/g, "")}</p>
       </div>
 
       <p className="text-sm text-muted-foreground max-w-sm leading-relaxed text-balance">{bio}</p>
