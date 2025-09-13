@@ -1,16 +1,18 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useId, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, X, Upload } from "lucide-react"
+import { Plus, X, Upload, ExternalLink, Loader2, User } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useCreateProfile } from "@/hooks/create"
 import { useUpdateProfile } from "@/hooks/update"
 import { useProfile } from "@/hooks/use-profile"
 import { getLinkType } from "@/lib/link"
+import Link from "next/link"
+import { uploadAvatarToPinata } from "@/lib/upload"
 
 const WalletMultiButton = dynamic(
     async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -36,6 +38,72 @@ interface SetupFormClientProps {
     }) => void
 }
 
+export interface AvatarUploaderProps {
+    avatar: string;
+    setAvatar: React.Dispatch<React.SetStateAction<string>>;
+    setFile?: React.Dispatch<React.SetStateAction<File | null>>;
+}
+const MAX_SIZE = 5 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+export const AvatarUploader: React.FC<AvatarUploaderProps & { setFile: React.Dispatch<React.SetStateAction<File | null>> }> = ({
+    avatar,
+    setAvatar,
+    setFile
+}) => {
+    const [error, setError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!ALLOWED_TYPES.includes(file.type)) {
+            setError("Only JPEG, PNG, and WEBP are allowed.");
+            return;
+        }
+
+        if (file.size > MAX_SIZE) {
+            setError("File size must be less than 5MB.");
+            return;
+        }
+
+        setError(null);
+        setFile(file);
+        setAvatar(URL.createObjectURL(file));
+    };
+
+    return (
+        <div className="flex flex-col items-center justify-center gap-4">
+            <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                aria-label="Upload avatar"
+                className="w-28 h-28 rounded-full border border-gray-300 bg-gray-50 shadow-md flex items-center justify-center overflow-hidden relative group focus:outline-none focus:ring-2 focus:ring-primary transition"
+            >
+                {avatar ? (
+                    <img src={avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                ) : (
+                    <Upload className="w-12 h-12 text-gray-400" />
+                )}
+
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/jpeg, image/png, image/webp"
+                    onChange={handleFileChange}
+                    className="hidden"
+                />
+
+                <span className="absolute inset-0 rounded-full bg-black/15 opacity-0 group-hover:opacity-100 transition" />
+            </button>
+
+            {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
+        </div>
+    );
+};
+
+
 export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
     const { createProfile, isLoading: createLoading, error: createError, connected } = useCreateProfile()
     const { updateProfile, isLoading: updateLoading, error: updateError } = useUpdateProfile()
@@ -45,6 +113,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
     const [bio, setBio] = useState("")
     const [links, setLinks] = useState<Link[]>([{ title: "", url: "" }])
     const [avatar, setAvatar] = useState<string>("")
+    const [file, setFile] = useState<File | null>(null);
 
     const [usernameError, setUsernameError] = useState("")
     const [linkErrors, setLinkErrors] = useState<{ [key: number]: { title?: string; url?: string } }>({})
@@ -109,27 +178,34 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-
-        const validLinks = links.filter((link) => link.title.trim() && link.url.trim())
+        e.preventDefault();
+    
+        const validLinks = links.filter((link) => link.title.trim() && link.url.trim());
         const profileData = {
             username,
             bio,
             links: validLinks,
             avatar,
-        }
-
+        };
+    
         try {
-            await createProfile(profileData)
+            if (file) {
+                const { url } = await uploadAvatarToPinata(file);
+                setAvatar(url);
+                profileData.avatar = url;
+            }
+    
+            await createProfile(profileData);
+    
             if (onSetupComplete) {
-                onSetupComplete(profileData)
+                onSetupComplete(profileData);
             } else {
-                alert('Profile created successfully!')
+                alert("Profile created successfully!");
             }
         } catch (err) {
-            console.error(err)
+            console.error(err);
         }
-    }
+    };
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -304,6 +380,18 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                 >
                                     {updateLoading ? "Updating Profile..." : "Update Profile"}
                                 </Button>
+
+                                {profile?.username && (
+                                    <div className="text-center mt-6">
+                                        <Link
+                                            href={`/u/${profile.username}`}
+                                            className="group inline-flex items-center text-sm font-medium text-primary hover:text-primary/90 transition-colors"
+                                        >
+                                            <span>View your profile</span>
+                                            <ExternalLink className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                                        </Link>
+                                    </div>
+                                )}
                             </div>
                         </form>
                     </CardContent>
@@ -333,27 +421,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                     <CardContent>
                         <form onSubmit={handleSubmit} className={`space-y-6 ${!connected ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-foreground">Profile Picture</label>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-full bg-muted border-2 border-dashed border-border flex items-center justify-center shrink-0">
-                                        {avatar ? (
-                                            <img
-                                                src={avatar || "/placeholder.svg"}
-                                                alt="Avatar"
-                                                className="w-full h-full rounded-full object-cover"
-                                            />
-                                        ) : (
-                                            <Upload className="w-6 h-6 text-muted-foreground" />
-                                        )}
-                                    </div>
-                                    <Input
-                                        type="url"
-                                        placeholder="Enter image URL"
-                                        value={avatar}
-                                        onChange={(e: any) => setAvatar(e.target.value)}
-                                        className="flex-1"
-                                    />
-                                </div>
+                                <AvatarUploader avatar={avatar} setAvatar={setAvatar} setFile={setFile} />
                             </div>
 
                             <div className="space-y-2">
