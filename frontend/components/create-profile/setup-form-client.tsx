@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, X, Upload, ExternalLink, Loader2, User } from "lucide-react"
+import { Plus, X, Upload, ExternalLink, User } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useCreateProfile } from "@/hooks/create"
 import { useUpdateProfile } from "@/hooks/update"
@@ -14,8 +14,9 @@ import { getLinkType } from "@/lib/link"
 import Link from "next/link"
 import { uploadAvatarToPinata } from "@/lib/upload"
 import { useWallet } from "@solana/wallet-adapter-react"
-import { storeAvatarToPinata } from "@/actions/uploadToDb"
+import { storeAvatarToDb, updatAvatarInDb } from "@/actions/uploadToDb"
 import { useProgram } from "@/lib/program-cllient"
+import { Badge } from "../ui/badge"
 
 const WalletMultiButton = dynamic(
     async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -119,26 +120,50 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
     const [file, setFile] = useState<File | null>(null);
     const { publicKey } = useWallet()
     const program = useProgram()
+    const [url, setUrl] = useState<string | null>("");
+    const [avatarLoading, setAvatarLoading] = useState(false);
 
     const [usernameError, setUsernameError] = useState("")
     const [linkErrors, setLinkErrors] = useState<{ [key: number]: { title?: string; url?: string } }>({})
 
     useEffect(() => {
-        if (exists && profile && profile.owner !== lastProfileOwner.current) {
-            lastProfileOwner.current = profile.owner
+        if (!program || !profile) return;
 
-            setBio(profile.bio)
+        if (exists && profile.owner !== lastProfileOwner.current) {
+            lastProfileOwner.current = profile.owner;
+
+            setBio(profile.bio);
 
             const normalizedLinks: Link[] = profile.links.map((url) => ({
                 title: "",
                 url,
-            }))
+            }));
 
             setLinks(
                 normalizedLinks.length ? normalizedLinks : [{ title: "", url: "" }]
-            )
+            );
         }
-    }, [exists, profile])
+
+        const fetchUrl = async () => {
+            try {
+                const res = await fetch("/api/fetchUrl", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userPublicKey: profile.owner,
+                        programId: program.programId.toString(),
+                    }),
+                });
+
+                const data = await res.json();
+                if (data.url) setUrl(data.url);
+            } catch (err) {
+                console.error("Failed to fetch URL:", err);
+            }
+        };
+
+        fetchUrl();
+    }, [program, exists, profile]);
 
     const addLink = () => {
         if (links.length < MAX_LINKS) {
@@ -202,7 +227,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                 setAvatar(url)
                 profileData.avatar = url
 
-                await storeAvatarToPinata({
+                await storeAvatarToDb({
                     userPublicKey: publicKey?.toBase58()!,
                     programId: program?.programId.toBase58()!,
                     pinataUrl: url
@@ -221,48 +246,61 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
 
 
     const handleUpdate = async (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
 
-        const updateData: { bio?: string; links?: string[] } = {}
+        const updateData: { bio?: string; links?: string[]; avatar?: string } = {};
+        const updatedUrls = links.map((l) => l.url.trim()).filter(Boolean);
 
-        if (bio !== profile?.bio) {
-            updateData.bio = bio
-        }
-
-        const updatedUrls = links
-            .map((l) => l.url.trim())
-            .filter(Boolean)
-
-        if (
-            !profile?.links ||
-            profile.links.length !== updatedUrls.length ||
-            profile.links.some((url, idx) => url !== updatedUrls[idx])
-        ) {
-            updateData.links = updatedUrls
-        }
-
-        if (!updateData.bio && !updateData.links) {
-            alert("Nothing to update")
-            return
+        if (bio !== profile?.bio) updateData.bio = bio;
+        if (!profile?.links || profile.links.length !== updatedUrls.length || profile.links.some((url, idx) => url !== updatedUrls[idx])) {
+            updateData.links = updatedUrls;
         }
 
         try {
+            if (file) {
+                setAvatarLoading(true);
+                const { url } = await uploadAvatarToPinata(file);
+                setAvatar(url);
+                updateData.avatar = url;
+
+                if (publicKey && program?.programId) {
+                    await updatAvatarInDb({
+                        userPublicKey: publicKey.toBase58(),
+                        programId: program.programId.toBase58(),
+                        pinataUrl: url,
+                    });
+                }
+
+                alert("Avatar updated successfully!");
+                setFile(null);
+                setAvatarLoading(false);
+            }
+
+            if (!updateData.bio && !updateData.links) return;
+
+            if (!connected || !publicKey || !program?.programId) {
+                alert("Please connect your wallet to update bio or links.");
+                return;
+            }
+
             await updateProfile(updateData);
+
             if (onSetupComplete && profile) {
-                const validLinks = links.filter((link) => link.title.trim() && link.url.trim())
+                const validLinks = links.filter((link) => link.title.trim() && link.url.trim());
                 onSetupComplete({
                     username: profile.username,
                     bio,
                     links: validLinks,
-                    avatar
-                })
+                    avatar: updateData.avatar || avatar,
+                });
             } else {
-                alert("Profile updated successfully!")
+                alert("Profile updated successfully!");
             }
         } catch (err) {
-            console.error(err)
+            console.error("Update error:", err);
+            setAvatarLoading(false);
         }
-    }
+    };
 
     const isFormValid =
         connected &&
@@ -287,7 +325,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                         </div>
                         {!connected && (
                             <p className="text-xs text-destructive mt-2 text-center">
-                                Please connect your wallet to create a profile
+                                Please connect your wallet to update your profile
                             </p>
                         )}
                         {updateError && (
@@ -297,10 +335,24 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                         )}
                     </div>
                     <CardContent>
-                        <form
-                            onSubmit={handleUpdate}
-                            className="space-y-6"
-                        >
+                        <form onSubmit={handleUpdate} className="space-y-6">
+                            <div className="flex flex-col items-center justify-center space-y-3">
+                                <AvatarUploader
+                                    avatar={avatar || url || ""}
+                                    setAvatar={setAvatar}
+                                    setFile={setFile}
+                                />
+                                <div className="space-y-1 text-center">
+                                    <CardTitle className="text-2xl">@{profile.username}</CardTitle>
+                                    <Badge
+                                        variant="secondary"
+                                        className="text-xs inline-flex items-center"
+                                    >
+                                        <User className="w-3 h-3 mr-1" />
+                                        On-chain Profile
+                                    </Badge>
+                                </div>
+                            </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Bio *</label>
                                 <Textarea
@@ -388,10 +440,14 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                             <div className="space-y-4">
                                 <Button
                                     type="submit"
-                                    disabled={updateLoading}
+                                    disabled={updateLoading || avatarLoading}
                                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
                                 >
-                                    {updateLoading ? "Updating Profile..." : "Update Profile"}
+                                    {avatarLoading
+                                        ? "Uploading Avatar..."
+                                        : updateLoading
+                                            ? "Updating Profile..."
+                                            : "Update Profile"}
                                 </Button>
 
                                 {profile?.username && (
