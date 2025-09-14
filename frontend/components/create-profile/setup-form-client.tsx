@@ -353,6 +353,19 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                     </Badge>
                                 </div>
                             </div>
+                            {profile?.username && (
+                                <div className="text-center mt-2">
+                                    <Link
+                                        href={`/u/${profile.username}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group inline-flex items-center text-sm font-medium text-primary hover:text-primary/90 transition-colors"
+                                    >
+                                        <span>View your profile</span>
+                                        <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </Link>
+                                </div>
+                            )}
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Bio *</label>
                                 <Textarea
@@ -449,20 +462,6 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                             ? "Updating Profile..."
                                             : "Update Profile"}
                                 </Button>
-
-                                {profile?.username && (
-                                    <div className="text-center mt-6">
-                                        <Link
-                                            href={`/u/${profile.username}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="group inline-flex items-center text-sm font-medium text-primary hover:text-primary/90 transition-colors"
-                                        >
-                                            <span>View your profile</span>
-                                            <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                        </Link>
-                                    </div>
-                                )}
                             </div>
                         </form>
                     </CardContent>

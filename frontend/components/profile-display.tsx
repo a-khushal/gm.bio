@@ -95,7 +95,6 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
         <div className="flex flex-col items-center space-y-6 max-w-2xl mx-auto">
             <div className="text-center space-y-2">
                 <h1 className="text-3xl font-bold text-foreground">gm.bio</h1>
-                <p className="text-muted-foreground">@{profile.username}</p>
             </div>
 
             <Card className="w-full bg-card border-border">
@@ -252,12 +251,16 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                         className="ml-1 h-3 w-auto"
                     />
                 </div>
-                <a
-                    href="/create"
-                    className="inline-flex items-center text-xs text-primary hover:underline"
-                >
-                    Create your own gm.bio profile
-                </a>
+                <span className="inline-flex items-center text-xs text-foreground">
+                    Create your own&nbsp;
+                    <a
+                        href="/create"
+                        className="text-primary font-semibold hover:underline"
+                    >
+                        gm.bio
+                    </a>
+                    &nbsp;profile
+                </span>
             </div>
         </div>
     )

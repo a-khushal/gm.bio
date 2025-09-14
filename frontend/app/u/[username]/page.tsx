@@ -31,31 +31,3 @@ export default async function UserPage({ params }: UserPageProps) {
     }
 }
 
-export async function generateMetadata({ params }: UserPageProps) {
-    try {
-        const { username } = params;
-        const profile = await fetchUserProfile(username)
-
-        if (!profile) {
-            return {
-                title: "User Not Found - gm.bio",
-                description: "The requested user profile could not be found."
-            }
-        }
-
-        return {
-            title: `${profile.username} - gm.bio`,
-            description: profile.bio || `View ${profile.username}'s profile on gm.bio`,
-            openGraph: {
-                title: `${profile.username} - gm.bio`,
-                description: profile.bio || `View ${profile.username}'s profile on gm.bio`,
-                images: profile.avatar ? [profile.avatar] : [],
-            },
-        }
-    } catch (error) {
-        return {
-            title: "User Not Found - gm.bio",
-            description: "The requested user profile could not be found."
-        }
-    }
-}
