@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, User, Link as LinkIcon, Copy, Check, Wallet } from "lucide-react"
 import { getLinkType } from "@/lib/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useProgram } from "@/lib/program-cllient"
 
 interface ProfileDisplayProps {
     profile: {
@@ -21,6 +22,8 @@ interface ProfileDisplayProps {
 export function ProfileDisplay({ profile }: ProfileDisplayProps) {
     const [copiedAddress, setCopiedAddress] = useState(false)
     const [copiedLinks, setCopiedLinks] = useState<{ [key: number]: boolean }>({})
+    const [url, setUrl] = useState<string | undefined>("");
+    const program = useProgram()
 
     const getInitials = (username: string) => {
         return username.slice(0, 2).toUpperCase()
@@ -63,6 +66,31 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
         return `${address.slice(0, 4)}...${address.slice(-4)}`
     }
 
+    useEffect(() => {
+        if (!program) return;
+
+        const main = async () => {
+            try {
+                const res = await fetch("/api/fetchUrl", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userPublicKey: profile.owner,
+                        programId: program.programId.toString(),
+                    }),
+                });
+
+                const data = await res.json();
+                if (data.url) setUrl(data.url);
+            } catch (err) {
+                console.error("Failed to fetch URL:", err);
+            }
+        };
+
+        main();
+    }, [program, profile.owner]);
+
+
     return (
         <div className="flex flex-col items-center space-y-6 max-w-2xl mx-auto">
             <div className="text-center space-y-2">
@@ -73,9 +101,13 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
             <Card className="w-full bg-card border-border">
                 <CardHeader className="text-center">
                     <div className="flex flex-col items-center space-y-4">
-                        <Avatar className="w-24 h-24">
-                            <AvatarImage src={profile.avatar} alt={profile.username} />
-                            <AvatarFallback className="text-2xl">
+                        <Avatar className="w-36 h-36 rounded-full overflow-hidden">
+                            <AvatarImage
+                                src={url || profile.avatar}
+                                alt={profile.username}
+                                className="object-cover object-center w-full h-full"
+                            />
+                            <AvatarFallback className="text-2xl flex items-center justify-center w-full h-full">
                                 {getInitials(profile.username)}
                             </AvatarFallback>
                         </Avatar>
@@ -200,17 +232,26 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                                 </div>
                             </div>
                         </div>
-                        <p className="text-xs text-muted-foreground text-center">
-                            This wallet owns and controls this profile on-chain
-                        </p>
+                        <div className="flex items-center justify-center space-x-1">
+                            <p className="text-xs text-muted-foreground">
+                                This wallet owns and controls this profile on-chain
+                            </p>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
 
             <div className="text-center space-y-2">
-                <p className="text-xs text-muted-foreground">
-                    This profile is stored on-chain and verified by Solana
-                </p>
+                <div className="flex items-center justify-center space-x-1">
+                    <p className="text-xs text-muted-foreground">
+                        This profile is stored on-chain and verified by
+                    </p>
+                    <img
+                        src="/solanaLogo.svg"
+                        alt="Solana"
+                        className="ml-1 h-3 w-auto"
+                    />
+                </div>
                 <a
                     href="/create"
                     className="inline-flex items-center text-xs text-primary hover:underline"

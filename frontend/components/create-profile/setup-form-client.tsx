@@ -398,6 +398,8 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                     <div className="text-center mt-6">
                                         <Link
                                             href={`/u/${profile.username}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="group inline-flex items-center text-sm font-medium text-primary hover:text-primary/90 transition-colors"
                                         >
                                             <span>View your profile</span>

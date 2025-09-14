@@ -25,7 +25,7 @@ export default function NotFound() {
 
                         <CardContent className="space-y-4 text-center">
                             <p className="text-muted-foreground">
-                                The user profile you're looking for doesn't exist or has been removed.
+                                The user profile you're looking for doesn't exist.
                             </p>
 
                             <div className="space-y-3 pt-4">
@@ -35,21 +35,19 @@ export default function NotFound() {
                                         Create Your Profile
                                     </Link>
                                 </Button>
-
-                                <Button variant="outline" asChild className="w-full">
-                                    <Link href="/">
-                                        <Home className="w-4 h-4 mr-2" />
-                                        Go Home
-                                    </Link>
-                                </Button>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <div className="text-center">
+                    <div className="flex items-center justify-center space-x-2">
                         <p className="text-xs text-muted-foreground">
-                            All profiles on gm.bio are stored on-chain and verified by Solana
+                            All profiles on gm.bio are stored on-chain and verified by
                         </p>
+                        <img 
+                            src="/solanaLogo.svg" 
+                            alt="Solana" 
+                            className="h-3 w-auto"
+                        />
                     </div>
                 </div>
             </div>

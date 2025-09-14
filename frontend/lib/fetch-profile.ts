@@ -2,8 +2,9 @@ import { Connection, PublicKey } from "@solana/web3.js"
 import { Program, AnchorProvider, setProvider } from "@coral-xyz/anchor"
 import idl from "../../target/idl/profile_program.json"
 import type { ProfileProgram } from "../../target/types/profile_program"
+import prisma from "./db"
 
-const connection = new Connection("https://api.devnet.solana.com")
+const connection = new Connection(process.env.RPC_URL || "https://api.devnet.solana.com")
 
 const dummyWallet = {
     publicKey: PublicKey.default,

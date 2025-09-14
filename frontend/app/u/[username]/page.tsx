@@ -32,9 +32,8 @@ export default async function UserPage({ params }: UserPageProps) {
 }
 
 export async function generateMetadata({ params }: UserPageProps) {
-    const { username } = params
-
     try {
+        const { username } = params;
         const profile = await fetchUserProfile(username)
 
         if (!profile) {
