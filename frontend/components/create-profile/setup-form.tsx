@@ -1,15 +1,6 @@
 import { SetupFormClient } from "./setup-form-client"
 
-interface SetupFormProps {
-  onSetupComplete?: (data: {
-    username: string
-    bio: string
-    links: Array<{ title: string; url: string }>
-    avatar?: string
-  }) => void
-}
-
-export function SetupForm({ onSetupComplete }: SetupFormProps) {
+export function SetupForm() {
   return (
     <div className="flex flex-col items-center space-y-6 max-w-2xl mx-auto">
       <div className="text-center space-y-2">
@@ -17,7 +8,7 @@ export function SetupForm({ onSetupComplete }: SetupFormProps) {
         <p className="text-muted-foreground">Create your on-chain-bio</p>
       </div>
 
-      <SetupFormClient onSetupComplete={onSetupComplete} />
+      <SetupFormClient />
 
       <p className="text-xs text-muted-foreground text-center">
         Your profile will be stored on-chain for permanent access

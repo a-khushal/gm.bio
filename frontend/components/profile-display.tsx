@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, User, Link as LinkIcon, Copy, Check, Wallet } from "lucide-react"
+import { ExternalLink, User, Link as LinkIcon, Copy, Check, Wallet, ArrowUpRight } from "lucide-react"
 import { getLinkType } from "@/lib/link"
 import { useEffect, useState } from "react"
 import { useProgram } from "@/lib/program-cllient"
@@ -167,7 +167,7 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:cursor-pointer"
                                                     onClick={(e) => {
                                                         e.preventDefault()
                                                         copyToClipboard(url, 'link', index)
@@ -179,7 +179,7 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                                                         <Copy className="w-3 h-3" />
                                                     )}
                                                 </Button>
-                                                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                                                <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                             </div>
                                         </a>
                                     </div>

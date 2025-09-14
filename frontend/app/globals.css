@@ -19,7 +19,7 @@
   --muted-foreground: oklch(0.7 0.02 270);
   --accent: oklch(0.7 0.3 35); /* Bright orange for accents */
   --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.6 0.3 15); /* Red for destructive actions */
+  --destructive: oklch(0.6 0.3 15 / 1); /* Red for destructive actions */
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.25 0.02 270 / 0.3); /* Subtle borders */
   --input: oklch(0.2 0.02 270);
@@ -29,7 +29,7 @@
   --chart-3: oklch(0.6 0.3 15);
   --chart-4: oklch(0.75 0.25 45);
   --chart-5: oklch(0.8 0.2 55);
-  --radius: 0.75rem; /* Slightly more rounded for modern feel */
+  --radius: 0.75rem;
   --sidebar: oklch(0.15 0.02 270);
   --sidebar-foreground: oklch(0.98 0 0);
   --sidebar-primary: oklch(0.65 0.25 25);
@@ -41,7 +41,6 @@
 }
 
 .dark {
-  /* Dark mode uses same colors since we're already dark-themed */
   --background: oklch(0.08 0.02 270);
   --foreground: oklch(0.98 0 0);
   --card: oklch(0.12 0.02 270);
@@ -56,7 +55,7 @@
   --muted-foreground: oklch(0.65 0.02 270);
   --accent: oklch(0.75 0.35 35);
   --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.65 0.35 15);
+  --destructive: oklch(0.6 0.3 15 / 1);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.22 0.02 270 / 0.3);
   --input: oklch(0.18 0.02 270);
@@ -123,6 +122,9 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  :where(*:not(svg)) {
+    @apply border-border outline-ring/50;
   }
 }
 
@@ -292,4 +294,9 @@
 
 .animate-spin-slow {
   animation: animate-spin-slow 8s linear infinite;
+}
+
+svg {
+  fill: currentColor;
+  stroke: currentColor;
 }

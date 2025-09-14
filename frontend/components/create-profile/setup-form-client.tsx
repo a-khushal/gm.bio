@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, X, Upload, ExternalLink, User } from "lucide-react"
+import { Plus, X, Upload, User, ArrowUpRight } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useCreateProfile } from "@/hooks/create"
 import { useUpdateProfile } from "@/hooks/update"
@@ -459,7 +459,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                             className="group inline-flex items-center text-sm font-medium text-primary hover:text-primary/90 transition-colors"
                                         >
                                             <span>View your profile</span>
-                                            <ExternalLink className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                                            <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                         </Link>
                                     </div>
                                 )}
