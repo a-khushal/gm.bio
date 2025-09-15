@@ -19,7 +19,7 @@ export default function Wallet({ children }: {
         () => [
             new UnsafeBurnerWalletAdapter(),
         ],
-        [network]
+        []
     );
 
     return (

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { UserX, Plus } from "lucide-react"
@@ -43,9 +44,11 @@ export default function NotFound() {
                         <p className="text-xs text-muted-foreground">
                             All profiles on gm.bio are stored on-chain and verified by
                         </p>
-                        <img 
+                        <Image 
                             src="/solanaLogo.svg" 
                             alt="Solana" 
+                            width={40}
+                            height={12}
                             className="h-3 w-auto"
                         />
                     </div>

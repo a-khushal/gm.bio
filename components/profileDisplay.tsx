@@ -8,6 +8,7 @@ import { User, Link as LinkIcon, Copy, Check, Wallet, ArrowUpRight } from "lucid
 import { getLinkType } from "@/lib/link"
 import { useEffect, useState } from "react"
 import { useProgram } from "@/lib/programCllient"
+import Image from "next/image"
 
 interface ProfileDisplayProps {
     profile: {
@@ -241,9 +242,11 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                     <p className="text-xs text-muted-foreground">
                         This profile is stored on-chain and verified by
                     </p>
-                    <img
+                    <Image
                         src="/solanaLogo.svg"
                         alt="Solana"
+                        width={40}
+                        height={12}
                         className="ml-1 h-3 w-auto"
                     />
                 </div>

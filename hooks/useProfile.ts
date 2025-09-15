@@ -61,7 +61,7 @@ export const useProfile = () => {
             setProfile(null)
             setExists(false)
         }
-    }, [connected, publicKey])
+    }, [connected, publicKey, program, fetchProfile])
 
     return {
         profile,

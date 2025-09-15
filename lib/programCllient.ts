@@ -1,6 +1,6 @@
 "use client"
 
-import { Program, AnchorProvider, setProvider, Idl } from "@coral-xyz/anchor";
+import { Program, AnchorProvider, setProvider, type Idl } from "@coral-xyz/anchor";
 import idl from "@/program/idl/profileProgram.json";
 import type { ProfileProgram } from "@/program/types/profileProgram";
 import { Connection, clusterApiUrl } from "@solana/web3.js";

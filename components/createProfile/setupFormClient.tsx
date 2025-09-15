@@ -227,9 +227,13 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                 setAvatar(url)
                 profileData.avatar = url
 
+                if (!publicKey || !program?.programId) {
+                    throw new Error("Public key or program ID is missing");
+                }
+                
                 await storeAvatarToDb({
-                    userPublicKey: publicKey?.toBase58()!,
-                    programId: program?.programId.toBase58()!,
+                    userPublicKey: publicKey.toBase58(),
+                    programId: program.programId.toBase58(),
                     pinataUrl: url
                 })
             }
@@ -513,7 +517,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                 <Textarea
                                     placeholder="Tell the world about yourself..."
                                     value={bio}
-                                    onChange={(e: any) => {
+                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                                         if (e.target.value.length <= MAX_BIO_LEN) {
                                             setBio(e.target.value)
                                         }
@@ -568,7 +572,9 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                                         type="url"
                                                         placeholder="https://..."
                                                         value={link.url}
-                                                        onChange={(e: any) => updateLink(index, "url", e.target.value)}
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                                            updateLink(index, "url", e.target.value)
+                                                        }
                                                         className="w-full"
                                                     />
                                                     {linkErrors[index]?.url && <p className="text-xs text-destructive">{linkErrors[index].url}</p>}
