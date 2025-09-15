@@ -12,6 +12,7 @@
     "@coral-xyz/anchor": "^0.31.1",
     "@prisma/client": "^6.16.1",
     "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@solana/wallet-adapter-react": "^0.15.39",
     "@solana/wallet-adapter-react-ui": "^0.9.39",
