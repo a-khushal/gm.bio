@@ -1,4 +1,4 @@
-import { ProfileDisplay } from "@/components/profileDisplay"
+import { ProfileDisplay } from "@/frontend/components/profileDisplay"
 import { fetchUserProfile } from "@/lib/fetchProfile"
 import { notFound } from "next/navigation"
 
