@@ -1,5 +1,4 @@
 'use client'
-import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 
@@ -18,7 +17,7 @@ export default function HomePage() {
 
         <div className="relative flex items-center justify-center h-[calc(100vh-120px)] py-8">
           <div className="relative w-[400px] h-[400px] md:w-[500px] md:h-[500px] lg:w-[600px] lg:h-[600px]">
-            <div className="absolute inset-0 rounded-full bg-gradient-conic from-orange-400 via-red-500 via-orange-500 to-red-400 p-1 animate-spin-slow">
+            <div className="absolute inset-0 rounded-full bg-gradient-conic from-orange-400 via-red-500 to-red-400 p-1 animate-spin-slow">
               <div className="w-full h-full rounded-full bg-background"></div>
             </div>
 
