@@ -160,7 +160,7 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                                                 </div>
                                             </div>
                                             <div className="flex items-center space-x-2 flex-shrink-0">
-                                                <Button
+                                                {/* <Button
                                                     variant="ghost"
                                                     size="sm"
                                                     className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:cursor-pointer"
@@ -174,7 +174,7 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                                                     ) : (
                                                         <Copy className="w-3 h-3" />
                                                     )}
-                                                </Button>
+                                                </Button> */}
                                                 <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                             </div>
                                         </a>
@@ -208,7 +208,7 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="h-8 w-8 p-0"
                                         onClick={() => copyToClipboard(profile.owner, 'address')}
                                     >
                                         {copiedAddress ? (
@@ -220,7 +220,7 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="h-8 w-8 p-0"
                                         onClick={() => window.open(`https://explorer.solana.com/address/${profile.owner}`, '_blank')}
                                     >
                                         <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
