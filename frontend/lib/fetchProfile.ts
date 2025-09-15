@@ -1,6 +1,6 @@
 import { Connection, PublicKey } from "@solana/web3.js"
 import { Program, AnchorProvider, setProvider } from "@coral-xyz/anchor"
-import idl from "./program/idl/profile_program.json"
+import idl from "./program/idl/profileProgram.json"
 import type { ProfileProgram } from "./program/types/profileProgram"
 
 const connection = new Connection(process.env.RPC_URL || "https://api.devnet.solana.com")

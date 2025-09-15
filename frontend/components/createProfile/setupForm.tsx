@@ -1,4 +1,4 @@
-import { SetupFormClient } from "./setup-form-client"
+import { SetupFormClient } from "./setupFormClient"
 
 export function SetupForm() {
   return (
