@@ -67,6 +67,6 @@ export async function uploadAvatarToPinata(
         return { hash, url };
     } catch (error) {
         console.error("Avatar upload error:", error);
-        throw new Error(`Failed to upload avatar: ${(error as any).message}`);
+        throw new Error(`Failed to upload avatar: ${(error as Error).message}`);
     }
 }

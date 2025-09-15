@@ -1,5 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js"
-import { Program, AnchorProvider, setProvider } from "@coral-xyz/anchor"
+import { Program, AnchorProvider, setProvider, Idl, Wallet } from "@coral-xyz/anchor"
 import idl from "@/program/idl/profileProgram.json"
 import type { ProfileProgram } from "@/program/types/profileProgram"
 
@@ -11,10 +11,10 @@ const dummyWallet = {
     signAllTransactions: async () => { throw new Error("Not implemented") }
 }
 
-const provider = new AnchorProvider(connection, dummyWallet as any, {})
+const provider = new AnchorProvider(connection, dummyWallet, {})
 setProvider(provider)
 
-const program = new Program(idl as any, provider) as Program<ProfileProgram>
+const program = new Program(idl as Idl, provider) as Program<ProfileProgram>
 
 export interface UserProfile {
     owner: string

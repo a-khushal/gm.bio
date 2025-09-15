@@ -23,10 +23,18 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.json({ url: res?.pinataUrl || null });
-    } catch (err: any) {
+    } catch (err) {
         console.error("API /fetch-url error:", err);
+        let message = "Internal Server Error";
+
+        if (err instanceof Error) {
+            message = err.message;
+        } else if (typeof err === "string") {
+            message = err;
+        }
+
         return NextResponse.json(
-            { error: err?.message || "Internal Server Error" },
+            { error: message },
             { status: 500 }
         );
     }

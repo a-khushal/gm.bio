@@ -26,7 +26,11 @@ export async function storeAvatarToDb({ userPublicKey, programId, pinataUrl }: P
         return { pda: pda.toBase58(), url: record.pinataUrl };
     } catch (err) {
         console.error("storeAvatarToPinata error:", err);
-        throw new Error((err as any).message);
+        if (err instanceof Error) {
+            throw new Error(err.message);
+        } else {
+            throw new Error(String(err));
+        }
     }
 }
 
@@ -50,6 +54,10 @@ export async function updatAvatarInDb({ userPublicKey, programId, pinataUrl }: P
         return { pda: pda.toBase58(), url: record.pinataUrl };
     } catch (err) {
         console.error("storeAvatarToPinata error:", err);
-        throw new Error((err as any).message);
+        if (err instanceof Error) {
+            throw new Error(err.message);
+        } else {
+            throw new Error(String(err));
+        }
     }
 }

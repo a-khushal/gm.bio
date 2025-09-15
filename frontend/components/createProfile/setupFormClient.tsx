@@ -373,7 +373,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                 <Textarea
                                     placeholder="Update your bio..."
                                     value={bio}
-                                    onChange={(e: any) => {
+                                    onChange={(e) => {
                                         if (e.target.value.length <= MAX_BIO_LEN) {
                                             setBio(e.target.value)
                                         }
@@ -428,7 +428,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                                         type="url"
                                                         placeholder="https://..."
                                                         value={link.url}
-                                                        onChange={(e: any) => updateLink(index, "url", e.target.value)}
+                                                        onChange={(e) => updateLink(index, "url", e.target.value)}
                                                         className="w-full"
                                                     />
                                                     {linkErrors[index]?.url && (
@@ -501,7 +501,7 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                     type="text"
                                     placeholder="your-username"
                                     value={username}
-                                    onChange={(e: any) => handleUsernameChange(e.target.value)}
+                                    onChange={(e) => handleUsernameChange(e.target.value)}
                                     required
                                     className="w-full"
                                 />
