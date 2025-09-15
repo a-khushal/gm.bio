@@ -1,6 +1,6 @@
 "use client"
 
-import { SetupForm } from "@/frontend/components/createProfile/setupForm"
+import { SetupForm } from "@/components/createProfile/setupForm"
 
 export function CreatePageClient() {
   return <SetupForm />

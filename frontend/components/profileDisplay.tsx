@@ -1,9 +1,9 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/frontend/components/ui/avatar"
-import { Badge } from "@/frontend/components/ui/badge"
-import { Button } from "@/frontend/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { User, Link as LinkIcon, Copy, Check, Wallet, ArrowUpRight } from "lucide-react"
 import { getLinkType } from "@/lib/link"
 import { useEffect, useState } from "react"
