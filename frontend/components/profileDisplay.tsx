@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { User, Link as LinkIcon, Copy, Check, Wallet, ArrowUpRight } from "lucide-react"
 import { getLinkType } from "@/lib/link"
 import { useEffect, useState } from "react"
-import { useProgram } from "@/lib/program-cllient"
+import { useProgram } from "@/lib/programCllient"
 
 interface ProfileDisplayProps {
     profile: {

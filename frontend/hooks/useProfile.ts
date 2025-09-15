@@ -1,5 +1,5 @@
 import { useWallet } from "@solana/wallet-adapter-react"
-import { useProgram } from "@/lib/program-cllient"
+import { useProgram } from "@/lib/programCllient"
 import { useState, useEffect } from "react"
 import { PublicKey } from "@solana/web3.js"
 

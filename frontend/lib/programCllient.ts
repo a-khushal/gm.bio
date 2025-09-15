@@ -2,7 +2,7 @@
 
 import { Program, AnchorProvider, setProvider } from "@coral-xyz/anchor";
 import idl from "./program/idl/profile_program.json";
-import type { ProfileProgram } from "./program/types/profile_program.ts";
+import type { ProfileProgram } from "./program/types/profileProgram";
 import { Connection, clusterApiUrl } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 

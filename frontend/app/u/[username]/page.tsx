@@ -1,5 +1,5 @@
-import { ProfileDisplay } from "@/components/profile-display"
-import { fetchUserProfile } from "@/lib/fetch-profile"
+import { ProfileDisplay } from "@/components/profileDisplay"
+import { fetchUserProfile } from "@/lib/fetchProfile"
 import { notFound } from "next/navigation"
 
 interface UserPageProps {

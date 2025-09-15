@@ -1,4 +1,4 @@
-import { CreatePageClient } from "@/components/create-profile/create-page-client";
+import { CreatePageClient } from "@/components/createProfile/create-page-client";
 
 export default function CreatePage() {
   return (
