@@ -25,7 +25,7 @@ export default function NotFound() {
 
                         <CardContent className="space-y-4 text-center">
                             <p className="text-muted-foreground">
-                                The user profile you're looking for doesn't exist.
+                                The user profile you&lsquo;re looking for doesn&lsquo;t exist.
                             </p>
 
                             <div className="space-y-3 pt-4">
