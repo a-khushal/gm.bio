@@ -312,13 +312,15 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
         !usernameError &&
         Object.keys(linkErrors).length === 0
 
+    const hasChanges =
+        bio !== (profile?.bio || "") ||
+        avatar !== (url || "") ||
+        JSON.stringify(links) !== JSON.stringify(profile?.links || [])
+
     return (
         <>
             {exists && profile && (
                 <Card className="w-full bg-card border-border">
-                    <CardHeader>
-                        <CardTitle className="text-xl text-center">Update Your Profile</CardTitle>
-                    </CardHeader>
                     <div>
                         <div className="w-full flex justify-center">
                             <WalletMultiButton />
@@ -450,19 +452,18 @@ export function SetupFormClient({ onSetupComplete }: SetupFormClientProps) {
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                <Button
-                                    type="submit"
-                                    disabled={updateLoading || avatarLoading}
-                                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
-                                >
-                                    {avatarLoading
-                                        ? "Uploading Avatar..."
-                                        : updateLoading
-                                            ? "Updating Profile..."
-                                            : "Update Profile"}
-                                </Button>
-                            </div>
+                            <Button
+                                type="submit"
+                                variant="default"
+                                disabled={!hasChanges || updateLoading || avatarLoading || !connected}
+                                className="w-full font-medium"
+                            >
+                                {avatarLoading
+                                    ? "Uploading Avatar..."
+                                    : updateLoading
+                                        ? "Updating Profile..."
+                                        : "Update Profile"}
+                            </Button>
                         </form>
                     </CardContent>
                 </Card>

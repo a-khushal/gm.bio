@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, User, Link as LinkIcon, Copy, Check, Wallet, ArrowUpRight } from "lucide-react"
+import { User, Link as LinkIcon, Copy, Check, Wallet, ArrowUpRight } from "lucide-react"
 import { getLinkType } from "@/lib/link"
 import { useEffect, useState } from "react"
 import { useProgram } from "@/lib/program-cllient"
@@ -93,10 +93,6 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
 
     return (
         <div className="flex flex-col items-center space-y-6 max-w-2xl mx-auto">
-            <div className="text-center space-y-2">
-                <h1 className="text-3xl font-bold text-foreground">gm.bio</h1>
-            </div>
-
             <Card className="w-full bg-card border-border">
                 <CardHeader className="text-center">
                     <div className="flex flex-col items-center space-y-4">
@@ -226,7 +222,7 @@ export function ProfileDisplay({ profile }: ProfileDisplayProps) {
                                         className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                                         onClick={() => window.open(`https://explorer.solana.com/address/${profile.owner}`, '_blank')}
                                     >
-                                        <ExternalLink className="w-3 h-3" />
+                                        <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                     </Button>
                                 </div>
                             </div>
